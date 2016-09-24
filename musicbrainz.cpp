@@ -65,6 +65,8 @@ emacs_value execute_search(emacs_env *env,
           {
             MusicBrainz5::CArtist *Artist = ArtistList->Item(count);
             stream << "Basic artist: " << std::endl << *Artist << std::endl;
+            debug(env, stream.str());
+            stream.clear();
           }
       }
 
