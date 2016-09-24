@@ -57,7 +57,7 @@ emacs_value execute_search(emacs_env *env,
       {
         MusicBrainz5::CArtistList *ArtistList = Metadata.ArtistList();
         results = ArtistList->NumItems();
-        stream << "Found " << ArtistList->NumItems() << " release(s)" << std::endl;
+        stream << "Found " << ArtistList->NumItems() << " artists(s)" << std::endl;
         debug(env, stream.str());
         stream.clear();
 
