@@ -2,7 +2,6 @@
 #include "musicbrainz5/Artist.h"
 #include "musicbrainz5/HTTPFetch.h"
 #include "musicbrainz5/Query.h"
-#include "string.h"
 
 /* `Message' `message` to Emacs. */
 void debug(emacs_env* const env,
