@@ -1,0 +1,5 @@
+* MusicBrainz search via dynamic modules
+
+This repository contains a [[https://www.gnu.org/software/emacs/manual/elisp.html#Dynamic-Modules][dynamic module]] for emacs that provides a function to
+search for artists on musicbrainz.org. It is not meant to be taken seriously,
+it's just a playground.
