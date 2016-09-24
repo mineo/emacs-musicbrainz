@@ -10,3 +10,6 @@ musicbrainz.so: musicbrainz.o
 
 %.o: %.cpp
 	$(CC) $(CFLAGS) -I$(ROOT)/src -fPIC -c $<
+
+interactive:
+	$(ROOT)/src/emacs -Q --eval "(add-to-list 'load-path \"$(CURDIR)\")" -l musicbrainz-interactive.el
