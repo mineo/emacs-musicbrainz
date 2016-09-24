@@ -130,7 +130,7 @@ int emacs_module_init (struct emacs_runtime *ert)
                                                    execute_search,
                                                    "Searches for the first artist name in ARGS in musicbrainz.org.",
                                                    nullptr);
-  bind_function(env, "musicbrainz-search-artist", search_function);
+  bind_function(env, "musicbrainz--search-artist", search_function);
   provide(env, "musicbrainz");
 
   return 0;
