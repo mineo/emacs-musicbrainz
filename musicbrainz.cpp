@@ -47,7 +47,7 @@ emacs_value execute_search(emacs_env *env,
   try
     {
       std::ostringstream stream;
-      int results = 0;
+      auto results = 0;
       auto Metadata = Query.Query("artist",
                                   "",
                                   "",
