@@ -45,48 +45,48 @@ emacs_value execute_search(emacs_env *env,
 
   MusicBrainz5::CQuery Query("emacsmodule-0.1");
   try
-  {
-    std::ostringstream stream;
-    int results = 0;
-    auto Metadata = Query.Query("artist",
-                                "",
-                                "",
-                                params);
-    if (Metadata.ArtistList() && Metadata.ArtistList())
-      {
-        auto ArtistList = Metadata.ArtistList();
-        results = ArtistList->NumItems();
-        stream << "Found " << ArtistList->NumItems() << " artists(s)" << std::endl;
-        debug(env, stream.str());
-        stream.clear();
+    {
+      std::ostringstream stream;
+      int results = 0;
+      auto Metadata = Query.Query("artist",
+                                  "",
+                                  "",
+                                  params);
+      if (Metadata.ArtistList() && Metadata.ArtistList())
+        {
+          auto ArtistList = Metadata.ArtistList();
+          results = ArtistList->NumItems();
+          stream << "Found " << ArtistList->NumItems() << " artists(s)" << std::endl;
+          debug(env, stream.str());
+          stream.clear();
 
-        for (int count=0; count < ArtistList->NumItems(); count++)
-          {
-            auto Artist = ArtistList->Item(count);
-            stream << "Basic artist: " << std::endl << *Artist << std::endl;
-            debug(env, stream.str());
-            stream.clear();
-          }
-      }
+          for (int count=0; count < ArtistList->NumItems(); count++)
+            {
+              auto Artist = ArtistList->Item(count);
+              stream << "Basic artist: " << std::endl << *Artist << std::endl;
+              debug(env, stream.str());
+              stream.clear();
+            }
+        }
 
-    stream << "Found " << results << " artists(s)" << std::endl;
-    auto retmessage = env->make_string(env,
-                                       stream.str().c_str(),
-                                       stream.str().length());
-    return retmessage;
-  }
+      stream << "Found " << results << " artists(s)" << std::endl;
+      auto retmessage = env->make_string(env,
+                                         stream.str().c_str(),
+                                         stream.str().length());
+      return retmessage;
+    }
   catch (MusicBrainz5::CExceptionBase& Error)
-  {
-    std::ostringstream errormessage;
-    errormessage << "Connection Exception: '" << Error.what() << "'" << std::endl;
-    errormessage << "LastResult: " << Query.LastResult() << std::endl;
-    errormessage << "LastHTTPCode: " << Query.LastHTTPCode() << std::endl;
-    errormessage << "LastErrorMessage: " << Query.LastErrorMessage() << std::endl;
-    debug(env, errormessage.str());
+    {
+      std::ostringstream errormessage;
+      errormessage << "Connection Exception: '" << Error.what() << "'" << std::endl;
+      errormessage << "LastResult: " << Query.LastResult() << std::endl;
+      errormessage << "LastHTTPCode: " << Query.LastHTTPCode() << std::endl;
+      errormessage << "LastErrorMessage: " << Query.LastErrorMessage() << std::endl;
+      debug(env, errormessage.str());
 
-    auto nil = env->intern(env, "nil");
-    return nil;
-  }
+      auto nil = env->intern(env, "nil");
+      return nil;
+    }
 }
 
 static void
@@ -118,22 +118,22 @@ provide (emacs_env *env, const char *feature)
 #ifdef __cplusplus
 extern "C" {
 #endif
-int plugin_is_GPL_compatible;
+  int plugin_is_GPL_compatible;
 
-int emacs_module_init (struct emacs_runtime *ert)
-{
-  auto * env = ert->get_environment(ert);
-  auto search_function = env->make_function(env,
-                                            1,
-                                            1,
-                                            execute_search,
-                                            "Searches for the first artist name in ARGS in musicbrainz.org.",
-                                            nullptr);
-  bind_function(env, "musicbrainz--search-artist", search_function);
-  provide(env, "musicbrainz");
+  int emacs_module_init (struct emacs_runtime *ert)
+  {
+    auto * env = ert->get_environment(ert);
+    auto search_function = env->make_function(env,
+                                              1,
+                                              1,
+                                              execute_search,
+                                              "Searches for the first artist name in ARGS in musicbrainz.org.",
+                                              nullptr);
+    bind_function(env, "musicbrainz--search-artist", search_function);
+    provide(env, "musicbrainz");
 
-  return 0;
-}
+    return 0;
+  }
 #ifdef __cplusplus
 }
 #endif
