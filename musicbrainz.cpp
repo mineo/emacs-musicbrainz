@@ -7,10 +7,10 @@
 void debug(emacs_env* const env,
            const std::string& message)
 {
-  emacs_value Fmessage = env->intern(env, "message");
-  emacs_value Qmessage = env->make_string(env,
-                                          message.c_str(),
-                                          message.length());
+  auto Fmessage = env->intern(env, "message");
+  auto Qmessage = env->make_string(env,
+                                   message.c_str(),
+                                   message.length());
   env->funcall(env, Fmessage, 1, &Qmessage);
 }
 
@@ -18,8 +18,8 @@ void debug(emacs_env* const env,
 intmax_t emacs_string_length(emacs_env* env,
                              emacs_value* value)
 {
-  emacs_value Flength = env->intern(env, "length");
-  emacs_value Qlength = env->funcall(env, Flength, 1, value);
+  auto Flength = env->intern(env, "length");
+  auto Qlength = env->funcall(env, Flength, 1, value);
   return env->extract_integer(env, Qlength);
 }
 
@@ -31,7 +31,7 @@ emacs_value execute_search(emacs_env *env,
 {
   // Elisp strings do not have a terminating NULL, therefore we need one more
   // byte here.
-  intmax_t bufsize = emacs_string_length(env, args) + 1;
+  auto bufsize = emacs_string_length(env, args) + 1;
 
   char buffer[bufsize];
 
@@ -40,7 +40,7 @@ emacs_value execute_search(emacs_env *env,
       return env->intern(env, "nil");
     }
 
-  MusicBrainz5::CQuery::tParamMap params = MusicBrainz5::CQuery::tParamMap();
+  auto params = MusicBrainz5::CQuery::tParamMap();
   params.insert(std::pair<std::string, std::string>("query", std::string(buffer)));
 
   MusicBrainz5::CQuery Query("emacsmodule-0.1");
@@ -48,13 +48,13 @@ emacs_value execute_search(emacs_env *env,
   {
     std::ostringstream stream;
     int results = 0;
-    MusicBrainz5::CMetadata Metadata = Query.Query("artist",
-                                                 "",
-                                                 "",
-                                                 params);
+    auto Metadata = Query.Query("artist",
+                                "",
+                                "",
+                                params);
     if (Metadata.ArtistList() && Metadata.ArtistList())
       {
-        MusicBrainz5::CArtistList *ArtistList = Metadata.ArtistList();
+        auto ArtistList = Metadata.ArtistList();
         results = ArtistList->NumItems();
         stream << "Found " << ArtistList->NumItems() << " artists(s)" << std::endl;
         debug(env, stream.str());
@@ -62,7 +62,7 @@ emacs_value execute_search(emacs_env *env,
 
         for (int count=0; count < ArtistList->NumItems(); count++)
           {
-            MusicBrainz5::CArtist *Artist = ArtistList->Item(count);
+            auto Artist = ArtistList->Item(count);
             stream << "Basic artist: " << std::endl << *Artist << std::endl;
             debug(env, stream.str());
             stream.clear();
@@ -70,9 +70,9 @@ emacs_value execute_search(emacs_env *env,
       }
 
     stream << "Found " << results << " artists(s)" << std::endl;
-    emacs_value retmessage = env->make_string(env,
-                                              stream.str().c_str(),
-                                              stream.str().length());
+    auto retmessage = env->make_string(env,
+                                       stream.str().c_str(),
+                                       stream.str().length());
     return retmessage;
   }
   catch (MusicBrainz5::CExceptionBase& Error)
@@ -84,7 +84,7 @@ emacs_value execute_search(emacs_env *env,
     errormessage << "LastErrorMessage: " << Query.LastErrorMessage() << std::endl;
     debug(env, errormessage.str());
 
-    emacs_value nil = env->intern(env, "nil");
+    auto nil = env->intern(env, "nil");
     return nil;
   }
 }
@@ -92,8 +92,8 @@ emacs_value execute_search(emacs_env *env,
 static void
 bind_function (emacs_env *env, const char* name, emacs_value Sfun){
   /* Convert the strings to symbols by interning them */
-  emacs_value Qfset = env->intern (env, "fset");
-  emacs_value Qsym = env->intern (env, name);
+  auto Qfset = env->intern (env, "fset");
+  auto Qsym = env->intern (env, name);
 
   /* Prepare the arguments array */
   emacs_value args[] = { Qsym, Sfun };
@@ -108,8 +108,8 @@ provide (emacs_env *env, const char *feature)
 {
   /* call 'provide' with FEATURE converted to a symbol */
 
-  emacs_value Qfeat = env->intern (env, feature);
-  emacs_value Qprovide = env->intern (env, "provide");
+  auto Qfeat = env->intern (env, feature);
+  auto Qprovide = env->intern (env, "provide");
   emacs_value args[] = { Qfeat };
 
   env->funcall (env, Qprovide, 1, args);
@@ -122,13 +122,13 @@ int plugin_is_GPL_compatible;
 
 int emacs_module_init (struct emacs_runtime *ert)
 {
-  emacs_env * env = ert->get_environment(ert);
-  emacs_value search_function = env->make_function(env,
-                                                   1,
-                                                   1,
-                                                   execute_search,
-                                                   "Searches for the first artist name in ARGS in musicbrainz.org.",
-                                                   nullptr);
+  auto * env = ert->get_environment(ert);
+  auto search_function = env->make_function(env,
+                                            1,
+                                            1,
+                                            execute_search,
+                                            "Searches for the first artist name in ARGS in musicbrainz.org.",
+                                            nullptr);
   bind_function(env, "musicbrainz--search-artist", search_function);
   provide(env, "musicbrainz");
 
