@@ -121,6 +121,7 @@ extern "C" {
   int plugin_is_GPL_compatible;
 
   int emacs_module_init (struct emacs_runtime *ert)
+    EMACS_NOEXCEPT
   {
     auto * env = ert->get_environment(ert);
     auto search_function = env->make_function(env,
